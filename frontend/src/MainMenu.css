@@ -1,0 +1,35 @@
+.main-menu-container {
+  display: flex;
+  flex-direction: row; /* Change to row to put them side-by-side */
+  flex-wrap: wrap; /* Allow modules to wrap if space is limited */
+  justify-content: center; /* Center the modules horizontally */
+  align-items: center; /* Center the modules vertically */
+  gap: 20px;
+  padding: 40px;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height) - 60px); /* Full height minus header */
+}
+
+.module-button {
+  width: 250px; /* Fixed width for a more square-like appearance */
+  height: 150px; /* Fixed height for a more square-like appearance */
+  padding: 15px; /* Adjusted padding */
+  font-size: 1.3em; /* Slightly smaller font for compactness */
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  box-shadow: 0 4px 10px var(--shadow-light);
+  display: flex; /* Use flex to center text vertically */
+  align-items: center;
+  justify-content: center;
+}
+
+.module-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-5px);
+}

@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f7f9; /* A slightly cooler light grey background */
+  color: #333; /* Darker default text for better contrast */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom CSS Variables for Corporate Look (Revised) */
+:root {
+  --primary-color: #2c3e50; /* Dark Slate Blue for header */
+  --primary-dark: #1d2b3a; /* Darker shade for hover effects */
+  --secondary-color: #7f8c8d; /* Muted Grey for secondary text */
+  --accent-color: #3498db; /* A professional blue for accents */
+  --background-light: #ffffff; /* White */
+  --background-grey: #ecf0f1; /* Even lighter grey */
+  --text-dark: #2c3e50; /* Dark text matching the primary color */
+  --border-color: #dce4e8; /* Light border color */
+  --shadow-light: rgba(44, 62, 80, 0.1); /* Shadow based on primary color */
+  --header-height: 60px; /* Standard corporate header height */
+  --card-background: #ffffff;
+  --card-border: #dce4e8;
+  --card-shadow: rgba(44, 62, 80, 0.1);
+}

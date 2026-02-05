@@ -1,0 +1,75 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: var(--primary-color); /* Dark Slate Blue */
+  height: var(--header-height);
+  padding: 0 30px; /* More horizontal padding */
+  display: flex;
+  align-items: center; /* Vertically center all items */
+  justify-content: space-between; /* Space out title and profile icon */
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle bottom border */
+  margin-bottom: 30px; /* Space below header */
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.25em; /* Clean, smaller title */
+  font-weight: 500; /* Medium weight */
+  letter-spacing: 0.5px; /* Subtle letter spacing */
+  text-shadow: none;
+  text-transform: none;
+  color: #ecf0f1; /* A softer white (Alabaster) */
+}
+
+.profile-icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background-color: var(--accent-color); /* Professional Blue for accent */
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9em;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.module-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 20px;
+  color: var(--text-dark);
+}
+
+.module-placeholder h2 {
+  font-size: 2em;
+  color: var(--primary-color);
+}
+
+.module-placeholder p {
+  font-size: 1.2em;
+}
+
+.module-placeholder button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.module-placeholder button:hover {
+  background-color: var(--primary-dark);
+}

@@ -1,0 +1,251 @@
+.sheet-info {
+  /* This rule is now effectively unused as the element is removed from JS */
+  display: none;
+}
+
+.loading-message,
+.error-message,
+.no-data-message {
+  width: 100%;
+  text-align: center;
+  padding: 10px; /* Reduced padding */
+  font-size: 0.9em; /* Reduced */
+  color: var(--text-dark);
+  background-color: var(--background-light);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px var(--shadow-light);
+  margin: 8px auto; /* Reduced margin */
+  max-width: 300px; /* Reduced max-width */
+}
+
+.error-message {
+  color: #dc3545; /* Red for errors */
+}
+
+.sheet-data-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.controls-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between; /* Space out back button and search */
+  align-items: center;
+  gap: 20px;
+}
+
+.search-bar {
+  flex-grow: 1; /* Allow search bar to take available space */
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size: 1em;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2px 5px var(--shadow-light);
+}
+
+.back-button {
+  padding: 10px 15px;
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap; /* Prevent breaking */
+}
+
+.back-button:hover {
+  background-color: var(--background-light);
+}
+
+/* Container for the cards */
+.sheet-data-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Even smaller min-width for cards */
+  gap: 8px; /* Reduced space between cards */
+  padding: 8px; /* Reduced padding */
+  width: 100%;
+  justify-content: center;
+}
+
+/* Card specific styles */
+.data-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px var(--card-shadow); /* More subtle shadow */
+  padding: 5px; /* Drastically reduced padding */
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Drastically reduced space between items */
+  transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+  text-align: left;
+  height: 100%;
+  font-size: 0.7em; /* Base font size for card content */
+}
+
+.data-card:hover {
+  transform: translateY(-1px); /* Even less pronounced lift */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03); /* Even less pronounced shadow on hover */
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between; /* Pushes button to the end */
+  align-items: center; /* Vertically centers items */
+  gap: 5px; /* Space between name/surname container and button */
+  margin-bottom: 3px; /* Small space before collapsible content */
+  border-bottom: 1px solid var(--background-grey); /* Separator */
+  padding-bottom: 3px;
+}
+
+.name-surname-container {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent name and surname from wrapping */
+  align-items: center; /* Vertically center name and surname parts */
+  flex-grow: 1; /* Allow it to take available space */
+  overflow: hidden; /* Hide overflow if text is too long */
+  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+}
+
+.card-main-info.combined-name {
+  font-size: 1.1em; /* Slightly larger font size for combined name/surname */
+  font-weight: 700; /* Even bolder */
+  white-space: nowrap; /* Ensure it stays on one line */
+  overflow: hidden; /* Hide overflow if text is too long */
+  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+  flex-grow: 1; /* Allow the combined name to grow and push the button */
+}
+
+.card-label {
+  font-weight: 500;
+  color: var(--secondary-color);
+  min-width: unset; /* Remove min-width for labels in header row */
+  margin-right: 0px; /* Remove margin */
+}
+
+.card-value {
+  color: var(--text-dark);
+  flex-grow: 0; /* Don't grow in header row */
+  text-align: left; /* Align value left in header row */
+  word-break: break-all; /* Allow breaking for long values if needed */
+  font-size: 1em; /* Relative to parent .data-card font-size */
+}
+
+.toggle-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 2px 6px; /* Even smaller padding */
+  cursor: pointer;
+  font-size: 0.65em; /* Even smaller font size for button */
+  align-self: center; /* Align button to center of header row */
+  width: fit-content;
+  transition: background-color 0.2s;
+  flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.toggle-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.send-email-button {
+  padding: 5px 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 3px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  margin-top: 5px;
+  width: 100%; /* Make button full width */
+}
+
+.send-email-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+.send-email-button:disabled {
+  background-color: var(--background-grey);
+  color: var(--text-light);
+  cursor: not-allowed;
+  border-color: var(--background-grey);
+}
+
+.send-email-button.sending {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.email-status {
+  font-size: 0.7em;
+  margin-top: 5px;
+  padding: 3px 5px;
+  border-radius: 3px;
+  text-align: center;
+  display: block;
+}
+
+.email-status.success {
+  background-color: #d4edda; /* Light green */
+  color: #155724; /* Dark green */
+}
+
+.email-status.error {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red */
+}
+.card-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--background-grey);
+}
+
+.card-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.hidden-item {
+  /* Styles for items that are initially hidden */
+  /* No specific styles needed here, visibility is controlled by React */
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  font-size: 1em;
+  color: var(--text-dark);
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 5px;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: var(--background-light);
+}
+
+.pagination button:disabled {
+  color: var(--secondary-color);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
