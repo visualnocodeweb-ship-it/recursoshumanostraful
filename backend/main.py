@@ -58,8 +58,8 @@ sheet_service = build('sheets', 'v4', credentials=creds)
 drive_service = build('drive', 'v3', credentials=creds) # Nuevo servicio de Drive
 
 # Resend API Configuration
-RESEND_API_KEY = "re_TNyNspmF_2my7rh1xAffyQLubwgsujh5H"
-RESEND_FROM_EMAIL = "trafulnet@geoarg.com"
+RESEND_API_KEY = os.getenv("RESEND_API_KEY") # Nuevo: obtener de variable de entorno
+RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL") # Nuevo: obtener de variable de entorno
 resend.api_key = RESEND_API_KEY
 
 
