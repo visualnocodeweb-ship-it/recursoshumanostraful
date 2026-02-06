@@ -16,6 +16,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",  # El puerto por defecto de React
+    "https://frontend-hxrk.onrender.com", # URL del frontend desplegado en Render
 ]
 
 app.add_middleware(
