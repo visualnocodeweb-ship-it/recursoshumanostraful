@@ -4,8 +4,8 @@ services:
     name: frontend
     env: static
     rootDir: frontend
-    build_command: npm install && npm run build
-    static_publish_path: ./build
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
     routes:
       - type: rewrite
         source: /*
@@ -16,5 +16,5 @@ services:
     name: backend
     env: python
     rootDir: backend
-    build_command: pip install -r requirements.txt
-    start_command: uvicorn main:app --host 0.0.0.0 --port 10000
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
