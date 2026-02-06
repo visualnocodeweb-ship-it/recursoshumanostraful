@@ -121,7 +121,7 @@ function DataCard({ row, headers }) {
               {/* If original 'certificado_adjunto' was present and there's no pdfDriveId, show it as a fallback link */}
               {header.toLowerCase() === 'certificado_adjunto' && row[header] && !hasPdfLink ? (
                 <span className="card-value">
-                  <a href={row[header]} target="_blank" rel="noopener noreferrer">Ver Certificado (anterior)</a>
+                  <a href={row[header]} target="_blank" rel="noopener noreferrer">{row[header]}</a>
                 </span>
               ) : (
                 <span className="card-value">{row[header] || '-'}</span>
