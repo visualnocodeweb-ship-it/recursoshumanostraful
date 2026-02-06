@@ -203,20 +203,22 @@
   opacity: 0.6;
 }
 .send-email-button {
-  padding: 8px 20px; /* Increased padding for wider button */
-  border: 1px solid var(--primary-color);
-  border-radius: 3px;
-  background-color: var(--primary-color);
-  color: white;
-  font-size: 0.9em; /* Slightly increased font size */
+  padding: 8px 20px;
+  border: 1px solid var(--primary-color); /* Borde con el color primario */
+  border-radius: 20px; /* Bordes más redondeados para un look más suave */
+  background-color: #f0f4f8; /* Un gris muy claro para el fondo */
+  color: var(--primary-color); /* Texto con el color primario */
+  font-size: 0.9em;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
   margin-top: 5px;
-  width: 100%; /* Make button full width */
+  width: 100%;
 }
 
 .send-email-button:hover:not(:disabled) {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-color); /* Fondo primario al pasar el ratón */
+  color: white; /* Texto blanco al pasar el ratón */
+  border-color: var(--primary-color); /* Borde primario al pasar el ratón */
 }
 
 .send-email-button:disabled {
