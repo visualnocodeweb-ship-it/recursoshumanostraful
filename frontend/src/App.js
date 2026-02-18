@@ -5,6 +5,7 @@ import LicenciaData from './LicenciaData'; // New component for "Licencia"
 import Formulario81DData from './Formulario81DData'; // New component for "Formulario 81_inciso_D"
 import Formulario81FData from './Formulario81FData'; // New component for "Formulario 81_inciso_F"
 import MainMenu from './MainMenu';   // The new menu component
+import SentEmails from './SentEmails'; // Import new component
 
 function App() {
   const [selectedModule, setSelectedModule] = useState(null);
@@ -40,9 +41,6 @@ function App() {
           <span>TF</span> {/* Changed to TF for Traful */}
         </div>
       </header>
-      import SentEmails from './SentEmails'; // Import new component
-
-      // ...
 
       <main>
         <SentEmails /> {/* Show sent emails history at the top */}
