@@ -28,6 +28,8 @@ function App() {
         return <Formulario81DData onBackToMenu={handleBackToMenu} />; // Render Formulario81DData
       case 'Formulario 81_inciso_F':
         return <Formulario81FData onBackToMenu={handleBackToMenu} />; // Render Formulario81FData
+      case 'Control de Envíos':
+        return <SentEmails onBackToMenu={handleBackToMenu} />;
       default:
         return <MainMenu onSelectModule={handleSelectModule} />;
     }
@@ -43,7 +45,6 @@ function App() {
       </header>
 
       <main>
-        <SentEmails /> {/* Show sent emails history at the top */}
         {renderModule()}
       </main>
     </div>
