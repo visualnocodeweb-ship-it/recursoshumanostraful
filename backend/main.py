@@ -17,6 +17,10 @@ from sqlalchemy.ext.declarative import declarative_base # Nuevo
 from sqlalchemy.orm import sessionmaker # Nuevo
 from datetime import datetime # Nuevo
 
+# Global definitions to prevent NameError
+sheet_service = None
+drive_service = None
+
 app = FastAPI()
 
 # --- Configuración de Base de Datos (PostgreSQL) ---
@@ -91,9 +95,11 @@ except Exception as e:
 if creds:
     sheet_service = build('sheets', 'v4', credentials=creds)
     drive_service = build('drive', 'v3', credentials=creds)
+    print("DEBUG: Google Services initialized successfully.")
 else:
     sheet_service = None
     drive_service = None
+    print("DEBUG: CREDENTIALS FAILED - Services set to None.")
 
 # Resend API Configuration
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
@@ -117,6 +123,10 @@ class SendPdfEmailRequest(BaseModel):
 
 def get_sheet_all_values(spreadsheet_id, range_name):
     try:
+        if not sheet_service:
+            print(f"Error: sheet_service is not initialized (None) when trying to read {range_name}")
+            return []
+            
         result = sheet_service.spreadsheets().values().get(
             spreadsheetId=spreadsheet_id, range=range_name).execute()
         return result.get('values', [])
