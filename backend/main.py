@@ -49,7 +49,19 @@ Base.metadata.create_all(bind=engine)
 # --- Configuración de Emails de Administradores ---
 ADMIN_EMAILS = ["rrhhtraful@gmail.com", "comisiondefomentovillatraful@gmail.com", "emanueltula89@gmail.com"]
 
+
 # ... (Rest of existing code)
+
+# Pydantic model for the request body
+class SendPdfEmailRequest(BaseModel):
+    pdf_drive_id: str
+    recipient_email: str
+    subject: str = "Documento adjunto"
+    body_text: str = "Adjunto el documento solicitado."
+    filename: str = "document.pdf"
+    sheet_row_number: int # Nuevo: número de fila en Google Sheet
+    sheet_name: str # Nuevo: nombre de la hoja a actualizar (e.g., 'certificado_medico', 'licencia')
+    update_column_letter: str # Nuevo: letra de la columna a actualizar (e.g., 'J', 'L')
 
 # --- Lógica de Notificación Automática a Administradores ---
 
