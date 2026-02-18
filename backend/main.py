@@ -50,7 +50,57 @@ Base.metadata.create_all(bind=engine)
 ADMIN_EMAILS = ["rrhhtraful@gmail.com", "comisiondefomentovillatraful@gmail.com", "emanueltula89@gmail.com"]
 
 
-# ... (Rest of existing code)
+
+# Configurar CORS para permitir que tu frontend de React se conecte
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://frontend-hxrk.onrender.com",
+    "https://recursos-humanos-traful-ultimo.onrender.com"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configuración de Google Sheets y Google Drive API
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.readonly'
+]
+SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(__file__), 'service_account.json')
+
+# --- Autenticación Google Sheets y Google Drive ---
+try:
+    with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
+        service_account_data = json.load(f)
+
+    service_account_data['private_key'] = service_account_data['private_key'].replace('\\n', '\n')
+
+    creds = service_account.Credentials.from_service_account_info(service_account_data, scopes=SCOPES)
+    
+except Exception as e:
+    print(f"ERROR CRÍTICO: Fallo en la inicialización de credenciales de Google: {e}")
+    creds = None
+
+# Inicializar servicios de Google Sheets y Google Drive
+if creds:
+    sheet_service = build('sheets', 'v4', credentials=creds)
+    drive_service = build('drive', 'v3', credentials=creds)
+else:
+    sheet_service = None
+    drive_service = None
+
+# Resend API Configuration
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL")
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+
 
 # Pydantic model for the request body
 class SendPdfEmailRequest(BaseModel):
