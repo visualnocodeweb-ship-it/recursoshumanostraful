@@ -43,72 +43,13 @@ class ProcessedRecord(Base):
 # Crear las tablas en la base de datos si no existen
 Base.metadata.create_all(bind=engine)
 
+
+# ... (Previous code)
+
 # --- Configuración de Emails de Administradores ---
-ADMIN_EMAILS = ["rrhhtraful@gmail.com", "comisiondefomentovillatraful@gmail.com"]
+ADMIN_EMAILS = ["rrhhtraful@gmail.com", "comisiondefomentovillatraful@gmail.com", "emanueltula89@gmail.com"]
 
-# ... (Rest of existing code: origins, middleware, Google setup, Resend config, SendPdfEmailRequest model)
-# Configurar CORS para permitir que tu frontend de React se conecte
-# Ajusta los orígenes según sea necesario para tu aplicación React
-origins = [
-    "http://localhost",
-    "http://localhost:3000",  # El puerto por defecto de React
-    "https://frontend-hxrk.onrender.com", # URL del frontend desplegado en Render
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Configuración de Google Sheets y Google Drive API
-SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets', # Ahora con permisos de escritura para Sheets
-    'https://www.googleapis.com/auth/drive.readonly' # Solo lectura para Drive
-]
-SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(__file__), 'service_account.json') # Use absolute path
-
-# --- Autenticación Google Sheets y Google Drive ---
-# Leer el archivo JSON de credenciales una sola vez al inicio
-try:
-    with open(SERVICE_ACCOUNT_FILE, 'r', encoding='utf-8') as f:
-        service_account_data = json.load(f)
-
-    # El campo 'private_key' en el JSON viene con '\n' ya escapados como '\\n'
-    # La función from_service_account_info espera la clave con '\n' reales.
-    service_account_data['private_key'] = service_account_data['private_key'].replace('\\n', '\n')
-
-    creds = service_account.Credentials.from_service_account_info(service_account_data, scopes=SCOPES)
-    
-except Exception as e:
-    # Esta excepción se levantará si hay problemas con las credenciales o el archivo JSON.
-    print(f"ERROR CRÍTICO: Fallo en la inicialización de credenciales de Google: {e}")
-    # Considerar si quieres que la aplicación se detenga o intente continuar de alguna forma.
-    # Para este caso, lanzaremos una excepción HTTP para que FastAPI lo maneje.
-    raise HTTPException(status_code=500, detail=f"Error al cargar las credenciales: {e}. Por favor, verifica tu archivo 'service_account.json' y sus permisos.")
-
-# Inicializar servicios de Google Sheets y Google Drive
-sheet_service = build('sheets', 'v4', credentials=creds)
-drive_service = build('drive', 'v3', credentials=creds) # Nuevo servicio de Drive
-
-# Resend API Configuration
-RESEND_API_KEY = os.getenv("RESEND_API_KEY") # Nuevo: obtener de variable de entorno
-RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL") # Nuevo: obtener de variable de entorno
-resend.api_key = RESEND_API_KEY
-
-
-# Pydantic model for the request body
-class SendPdfEmailRequest(BaseModel):
-    pdf_drive_id: str
-    recipient_email: str
-    subject: str = "Documento adjunto"
-    body_text: str = "Adjunto el documento solicitado."
-    filename: str = "document.pdf"
-    sheet_row_number: int # Nuevo: número de fila en Google Sheet
-    sheet_name: str # Nuevo: nombre de la hoja a actualizar (e.g., 'certificado_medico', 'licencia')
-    update_column_letter: str # Nuevo: letra de la columna a actualizar (e.g., 'J', 'L')
+# ... (Rest of existing code)
 
 # --- Lógica de Notificación Automática a Administradores ---
 
@@ -120,6 +61,66 @@ def get_sheet_all_values(spreadsheet_id, range_name):
     except Exception as e:
         print(f"Error reading sheet {range_name}: {e}")
         return []
+
+def initialize_db_with_existing_records():
+    """
+    On first run (if DB is empty), populate it with all existing records from Sheets
+    so they are NOT treated as 'new' and don't trigger emails.
+    """
+    db = SessionLocal()
+    try:
+        # Check if DB is empty
+        count = db.query(ProcessedRecord).count()
+        if count > 0:
+            print("Base de datos ya inicializada. Saltando carga inicial.")
+            return
+
+        print("Base de datos vacía. Cargando registros existentes para evitar notificaciones masivas...")
+        
+        # Configuración de los hojas a monitorear (MISMA CONFIG QUE ABAJO)
+        SPREADSHEET_ID = "1VohQVfx1rmnV8nkT3cxQdx996bj0BkeLovAmqYZXuMA"
+        sheets_config = [
+            {"name": "certificado_medico", "range": "certificado_medico!A1:Z"},
+            {"name": "licencia", "range": "licencia!A1:Z"},
+            {"name": "81_inciso_D", "range": "81_inciso_D!A1:Z"},
+            {"name": "81_inciso_F", "range": "81_inciso_F!A1:Z"}
+        ]
+
+        records_to_add = []
+        for sheet_conf in sheets_config:
+            rows = get_sheet_all_values(SPREADSHEET_ID, sheet_conf["range"])
+            if not rows: continue
+
+            headers = rows[0]
+            try:
+                id_idx = [h.lower() for h in headers].index('id')
+            except ValueError:
+                continue
+
+            for row in rows[1:]:
+                if len(row) <= id_idx: continue
+                record_id = row[id_idx]
+                if not record_id: continue
+
+                # Add to batch
+                records_to_add.append(ProcessedRecord(
+                    sheet_name=sheet_conf["name"],
+                    record_id=record_id,
+                    processed_at=datetime.utcnow()
+                ))
+        
+        if records_to_add:
+            db.bulk_save_objects(records_to_add)
+            db.commit()
+            print(f"Inicialización completa: {len(records_to_add)} registros antiguos marcados como procesados.")
+        else:
+            print("No se encontraron registros antiguos para cargar.")
+
+    except Exception as e:
+        print(f"Error durante la inicialización de DB: {e}")
+    finally:
+        db.close()
+
 
 def check_and_notify_admins():
     print("Iniciando chequeo de nuevos registros para notificación a administradores...")
@@ -216,11 +217,15 @@ def check_and_notify_admins():
 # Iniciar el Scheduler al arrancar
 @app.on_event("startup")
 def start_scheduler():
+    # 1. Start Scheduler
     scheduler = BackgroundScheduler()
     # Ejecutar cada 5 minutos
     scheduler.add_job(check_and_notify_admins, 'interval', minutes=5)
     scheduler.start()
     print("Scheduler de notificaciones iniciado (cada 5 minutos).")
+    
+    # 2. Initialize DB to prevent spam on first run
+    initialize_db_with_existing_records()
 
 
 # TEMPORARY TEST ENDPOINT TO DEBUG BASIC REACHABILITY
