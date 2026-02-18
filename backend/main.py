@@ -1,3 +1,6 @@
+
+# ... (Previous code remains unchanged until imports)
+
 import os
 import json
 from fastapi import FastAPI, HTTPException, Request
@@ -5,12 +8,45 @@ from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from pydantic import BaseModel # Nuevo
-import resend # Nuevo
-import base64 # Nuevo
+from pydantic import BaseModel
+import resend
+import base64
+from apscheduler.schedulers.background import BackgroundScheduler # Nuevo
+from sqlalchemy import create_engine, Column, String, DateTime, Integer # Nuevo
+from sqlalchemy.ext.declarative import declarative_base # Nuevo
+from sqlalchemy.orm import sessionmaker # Nuevo
+from datetime import datetime # Nuevo
 
 app = FastAPI()
 
+# --- Configuración de Base de Datos (PostgreSQL) ---
+# Usar la variable de entorno DATABASE_URL proporcionada por Render o la específica del usuario si no existe
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://base_datos_tablero_traful_pagina_general_user:bEKhclV6N026s8jNQcBDaH5sou0HZtmA@dpg-d64tk2i4d50c73eoksug-a.oregon-postgres.render.com/base_datos_tablero_traful_pagina_general")
+
+# Fix para SQLAlchemy con URLs de Postgres de Render (postgres:// -> postgresql://)
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# Modelo para rastrear registros procesados
+class ProcessedRecord(Base):
+    __tablename__ = "processed_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sheet_name = Column(String, index=True) # Nombre de la hoja (e.g., 'certificado_medico')
+    record_id = Column(String, index=True) # ID único del registro en la hoja (Columna A normalmente)
+    processed_at = Column(DateTime, default=datetime.utcnow)
+
+# Crear las tablas en la base de datos si no existen
+Base.metadata.create_all(bind=engine)
+
+# --- Configuración de Emails de Administradores ---
+ADMIN_EMAILS = ["rrhhtraful@gmail.com", "comisiondefomentovillatraful@gmail.com"]
+
+# ... (Rest of existing code: origins, middleware, Google setup, Resend config, SendPdfEmailRequest model)
 # Configurar CORS para permitir que tu frontend de React se conecte
 # Ajusta los orígenes según sea necesario para tu aplicación React
 origins = [
@@ -73,6 +109,119 @@ class SendPdfEmailRequest(BaseModel):
     sheet_row_number: int # Nuevo: número de fila en Google Sheet
     sheet_name: str # Nuevo: nombre de la hoja a actualizar (e.g., 'certificado_medico', 'licencia')
     update_column_letter: str # Nuevo: letra de la columna a actualizar (e.g., 'J', 'L')
+
+# --- Lógica de Notificación Automática a Administradores ---
+
+def get_sheet_all_values(spreadsheet_id, range_name):
+    try:
+        result = sheet_service.spreadsheets().values().get(
+            spreadsheetId=spreadsheet_id, range=range_name).execute()
+        return result.get('values', [])
+    except Exception as e:
+        print(f"Error reading sheet {range_name}: {e}")
+        return []
+
+def check_and_notify_admins():
+    print("Iniciando chequeo de nuevos registros para notificación a administradores...")
+    db = SessionLocal()
+    try:
+        # Configuración de los hojas a monitorear
+        # Estructura: (Nombre Hoja, Range para leer todo, Column Index del ID (0-based))
+        # Asumiendo que 'id' es siempre la primera columna (índice 0) o buscando por nombre
+        SPREADSHEET_ID = "1VohQVfx1rmnV8nkT3cxQdx996bj0BkeLovAmqYZXuMA"
+        
+        sheets_config = [
+            {"name": "certificado_medico", "range": "certificado_medico!A1:Z"},
+            {"name": "licencia", "range": "licencia!A1:Z"},
+            {"name": "81_inciso_D", "range": "81_inciso_D!A1:Z"},
+            {"name": "81_inciso_F", "range": "81_inciso_F!A1:Z"}
+        ]
+
+        for sheet_conf in sheets_config:
+            rows = get_sheet_all_values(SPREADSHEET_ID, sheet_conf["range"])
+            if not rows:
+                continue
+
+            headers = rows[0]
+            # Encontrar índice de columna 'id'
+            try:
+                id_idx = [h.lower() for h in headers].index('id')
+            except ValueError:
+                print(f"No se encontró columna 'id' en {sheet_conf['name']}, saltando.")
+                continue
+
+            # Encontrar otros índices útiles para el email (Nombre, Apellido, Fecha)
+            # Adaptar nombres según la hoja si varían mucho
+            try:
+                name_idx = next(i for i, h in enumerate(headers) if h.lower() in ['nombre', 'name'])
+                surname_idx = next(i for i, h in enumerate(headers) if h.lower() in ['apellido', 'surname', 'legajo'])
+            except StopIteration:
+                 # Si no encuentra nombres, usa índices genéricos o salta
+                 name_idx, surname_idx = -1, -1
+
+            for row in rows[1:]: # Saltar encabezado
+                if len(row) <= id_idx: continue
+                
+                record_id = row[id_idx]
+                if not record_id: continue # ID vacío
+                
+                # Chequear en DB si ya fue procesado
+                exists = db.query(ProcessedRecord).filter_by(
+                    sheet_name=sheet_conf["name"], 
+                    record_id=record_id
+                ).first()
+
+                if not exists:
+                    # Preparar datos para el email
+                    nombre = row[name_idx] if name_idx != -1 and len(row) > name_idx else "Desconocido"
+                    apellido = row[surname_idx] if surname_idx != -1 and len(row) > surname_idx else ""
+                    
+                    print(f"Nuevo registro encontrado en {sheet_conf['name']}: {record_id} ({nombre} {apellido}). Enviando notificación...")
+
+                    # Enviar Email a Administradores
+                    try:
+                        r = resend.Emails.send({
+                            "from": RESEND_FROM_EMAIL,
+                            "to": ADMIN_EMAILS,
+                            "subject": f"Nuevo Registro en {sheet_conf['name']}: {nombre} {apellido}",
+                            "html": f"""
+                                <h3>Nuevo Registro Detectado</h3>
+                                <p><strong>Hoja:</strong> {sheet_conf['name']}</p>
+                                <p><strong>ID Registro:</strong> {record_id}</p>
+                                <p><strong>Nombre:</strong> {nombre} {apellido}</p>
+                                <hr>
+                                <p>Este es un mensaje automático del sistema de Recursos Humanos Traful.</p>
+                            """
+                        })
+                        if r and r.get('id'):
+                            # Marcar como procesado en DB
+                            new_record = ProcessedRecord(
+                                sheet_name=sheet_conf["name"],
+                                record_id=record_id
+                            )
+                            db.add(new_record)
+                            db.commit()
+                            print(f"Notificación enviada y registro guardado: {record_id}")
+                    except Exception as e:
+                        print(f"Error enviando email admin para {record_id}: {e}")
+
+    except Exception as e:
+        print(f"Error en tarea programada: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        db.close()
+
+
+# Iniciar el Scheduler al arrancar
+@app.on_event("startup")
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    # Ejecutar cada 5 minutos
+    scheduler.add_job(check_and_notify_admins, 'interval', minutes=5)
+    scheduler.start()
+    print("Scheduler de notificaciones iniciado (cada 5 minutos).")
+
 
 # TEMPORARY TEST ENDPOINT TO DEBUG BASIC REACHABILITY
 @app.get("/")
