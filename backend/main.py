@@ -649,6 +649,9 @@ async def get_formulario_81_f_sheet_data(request: Request):
 
     except Exception as e:
         print(f"ERROR: Fallo al procesar los datos: {e}")
+
+# ... (Previous code)
+
         # Proporcionar un error más detallado puede ayudar en el desarrollo
         raise HTTPException(
             status_code=500,
@@ -656,4 +659,25 @@ async def get_formulario_81_f_sheet_data(request: Request):
                    "Verifica que las credenciales son válidas, los IDs de hoja/carpeta son correctos "
                    "y la cuenta de servicio tiene acceso."
         )
+
+
+@app.get("/processed-records")
+def get_processed_records(limit: int = 50):
+    """
+    Devuelve los últimos registros notificados para verificar el funcionamiento.
+    """
+    db = SessionLocal()
+    try:
+        records = db.query(ProcessedRecord).order_by(ProcessedRecord.processed_at.desc()).limit(limit).all()
+        return [
+            {
+                "sheet": r.sheet_name,
+                "id": r.record_id,
+                "enviado_el": r.processed_at
+            }
+            for r in records
+        ]
+    finally:
+        db.close()
+
 
