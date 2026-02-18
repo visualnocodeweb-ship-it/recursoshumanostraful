@@ -8,18 +8,23 @@
 .no-data-message {
   width: 100%;
   text-align: center;
-  padding: 10px; /* Reduced padding */
-  font-size: 0.9em; /* Reduced */
+  padding: 10px;
+  /* Reduced padding */
+  font-size: 0.9em;
+  /* Reduced */
   color: var(--text-dark);
   background-color: var(--background-light);
   border-radius: 6px;
   box-shadow: 0 1px 3px var(--shadow-light);
-  margin: 8px auto; /* Reduced margin */
-  max-width: 300px; /* Reduced max-width */
+  margin: 8px auto;
+  /* Reduced margin */
+  max-width: 300px;
+  /* Reduced max-width */
 }
 
 .error-message {
-  color: #dc3545; /* Red for errors */
+  color: #dc3545;
+  /* Red for errors */
 }
 
 .sheet-data-wrapper {
@@ -32,13 +37,15 @@
 .controls-container {
   margin-bottom: 20px;
   display: flex;
-  justify-content: space-between; /* Space out back button and search */
+  justify-content: space-between;
+  /* Space out back button and search */
   align-items: center;
   gap: 20px;
 }
 
 .search-bar {
-  flex-grow: 1; /* Allow search bar to take available space */
+  flex-grow: 1;
+  /* Allow search bar to take available space */
   max-width: 400px;
   padding: 10px 15px;
   font-size: 1em;
@@ -56,85 +63,117 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-  white-space: nowrap; /* Prevent breaking */
+  white-space: nowrap;
+  /* Prevent breaking */
 }
 
 .back-button:hover {
   background-color: var(--background-light);
 }
 
-/* Container for the cards */
+/* Container for the cards - Vertical List Layout */
 .sheet-data-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Even smaller min-width for cards */
-  gap: 8px; /* Reduced space between cards */
-  padding: 8px; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  /* Space between rows */
+  padding: 10px;
   width: 100%;
-  justify-content: center;
+  max-width: 900px;
+  /* Limit width for better readability on large screens */
+  margin: 0 auto;
+  /* Center the list */
 }
 
 /* Card specific styles */
 .data-card {
   background-color: var(--card-background);
   border: 1px solid var(--card-border);
-  border-radius: 4px;
-  box-shadow: 0 1px 4px var(--card-shadow); /* More subtle shadow */
-  padding: 5px; /* Drastically reduced padding */
+  border-radius: 8px;
+  /* Softer corners */
+  box-shadow: 0 2px 5px var(--card-shadow);
+  padding: 15px;
+  /* More padding for list view */
   display: flex;
   flex-direction: column;
-  gap: 2px; /* Drastically reduced space between items */
-  transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+  gap: 10px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   text-align: left;
-  height: 100%;
-  font-size: 0.7em; /* Base font size for card content */
+  width: 100%;
+  font-size: 0.95em;
+  /* Standard readable size */
 }
 
 .data-card:hover {
-  transform: translateY(-1px); /* Even less pronounced lift */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03); /* Even less pronounced shadow on hover */
+  transform: translateY(-1px);
+  /* Even less pronounced lift */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  /* Even less pronounced shadow on hover */
 }
 
 .card-header-row {
   display: flex;
-  justify-content: space-between; /* Pushes button to the end */
-  align-items: center; /* Vertically centers items */
-  gap: 5px; /* Space between name/surname container and button */
-  margin-bottom: 3px; /* Small space before collapsible content */
-  border-bottom: 1px solid var(--background-grey); /* Separator */
+  justify-content: space-between;
+  /* Pushes button to the end */
+  align-items: center;
+  /* Vertically centers items */
+  gap: 5px;
+  /* Space between name/surname container and button */
+  margin-bottom: 3px;
+  /* Small space before collapsible content */
+  border-bottom: 1px solid var(--background-grey);
+  /* Separator */
   padding-bottom: 3px;
 }
 
 .name-surname-container {
   display: flex;
-  flex-wrap: nowrap; /* Prevent name and surname from wrapping */
-  align-items: center; /* Vertically center name and surname parts */
-  flex-grow: 1; /* Allow it to take available space */
-  overflow: hidden; /* Hide overflow if text is too long */
-  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+  flex-wrap: nowrap;
+  /* Prevent name and surname from wrapping */
+  align-items: center;
+  /* Vertically center name and surname parts */
+  flex-grow: 1;
+  /* Allow it to take available space */
+  overflow: hidden;
+  /* Hide overflow if text is too long */
+  text-overflow: ellipsis;
+  /* Add ellipsis for overflowed text */
 }
 
 .card-main-info.combined-name {
-  font-size: 1.1em; /* Slightly larger font size for combined name/surname */
-  font-weight: 700; /* Even bolder */
-  white-space: nowrap; /* Ensure it stays on one line */
-  overflow: hidden; /* Hide overflow if text is too long */
-  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-  flex-grow: 1; /* Allow the combined name to grow and push the button */
+  font-size: 1.1em;
+  /* Slightly larger font size for combined name/surname */
+  font-weight: 700;
+  /* Even bolder */
+  white-space: nowrap;
+  /* Ensure it stays on one line */
+  overflow: hidden;
+  /* Hide overflow if text is too long */
+  text-overflow: ellipsis;
+  /* Add ellipsis for overflowed text */
+  flex-grow: 1;
+  /* Allow the combined name to grow and push the button */
 }
 
 .card-label {
   font-weight: 500;
   color: var(--secondary-color);
-  min-width: unset; /* Remove min-width for labels in header row */
-  margin-right: 0px; /* Remove margin */
+  min-width: unset;
+  /* Remove min-width for labels in header row */
+  margin-right: 0px;
+  /* Remove margin */
 }
 
 .card-value {
   color: var(--text-dark);
-  flex-grow: 0; /* Don't grow in header row */
-  text-align: left; /* Align value left in header row */
-  word-break: break-all; /* Allow breaking for long values if needed */
-  font-size: 1em; /* Relative to parent .data-card font-size */
+  flex-grow: 0;
+  /* Don't grow in header row */
+  text-align: left;
+  /* Align value left in header row */
+  word-break: break-all;
+  /* Allow breaking for long values if needed */
+  font-size: 1em;
+  /* Relative to parent .data-card font-size */
 }
 
 .toggle-button {
@@ -142,13 +181,17 @@
   color: white;
   border: none;
   border-radius: 3px;
-  padding: 2px 6px; /* Even smaller padding */
+  padding: 2px 6px;
+  /* Even smaller padding */
   cursor: pointer;
-  font-size: 0.65em; /* Even smaller font size for button */
-  align-self: center; /* Align button to center of header row */
+  font-size: 0.65em;
+  /* Even smaller font size for button */
+  align-self: center;
+  /* Align button to center of header row */
   width: fit-content;
   transition: background-color 0.2s;
-  flex-shrink: 0; /* Prevent button from shrinking */
+  flex-shrink: 0;
+  /* Prevent button from shrinking */
 }
 
 .toggle-button:hover {
@@ -167,10 +210,7 @@
   padding-bottom: 0;
 }
 
-.hidden-item {
-  /* Styles for items that are initially hidden */
-  /* No specific styles needed here, visibility is controlled by React */
-}
+/* .hidden-item styles removed as they were empty */
 
 .pagination {
   margin-top: 20px;
@@ -202,12 +242,17 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
+
 .send-email-button {
   padding: 8px 20px;
-  border: 1px solid var(--primary-color); /* Borde con el color primario */
-  border-radius: 20px; /* Bordes más redondeados para un look más suave */
-  background-color: #f0f4f8; /* Un gris muy claro para el fondo */
-  color: var(--primary-color); /* Texto con el color primario */
+  border: 1px solid var(--primary-color);
+  /* Borde con el color primario */
+  border-radius: 20px;
+  /* Bordes más redondeados para un look más suave */
+  background-color: #f0f4f8;
+  /* Un gris muy claro para el fondo */
+  color: var(--primary-color);
+  /* Texto con el color primario */
   font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
@@ -216,9 +261,12 @@
 }
 
 .send-email-button:hover:not(:disabled) {
-  background-color: var(--primary-color); /* Fondo primario al pasar el ratón */
-  color: white; /* Texto blanco al pasar el ratón */
-  border-color: var(--primary-color); /* Borde primario al pasar el ratón */
+  background-color: var(--primary-color);
+  /* Fondo primario al pasar el ratón */
+  color: white;
+  /* Texto blanco al pasar el ratón */
+  border-color: var(--primary-color);
+  /* Borde primario al pasar el ratón */
 }
 
 .send-email-button:disabled {
@@ -243,11 +291,15 @@
 }
 
 .email-status.success {
-  background-color: #d4edda; /* Light green */
-  color: #155724; /* Dark green */
+  background-color: #d4edda;
+  /* Light green */
+  color: #155724;
+  /* Dark green */
 }
 
 .email-status.error {
-  background-color: #f8d7da; /* Light red */
-  color: #721c24; /* Dark red */
+  background-color: #f8d7da;
+  /* Light red */
+  color: #721c24;
+  /* Dark red */
 }
