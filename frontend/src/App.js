@@ -40,7 +40,12 @@ function App() {
           <span>TF</span> {/* Changed to TF for Traful */}
         </div>
       </header>
+      import SentEmails from './SentEmails'; // Import new component
+
+      // ...
+
       <main>
+        <SentEmails /> {/* Show sent emails history at the top */}
         {renderModule()}
       </main>
     </div>
