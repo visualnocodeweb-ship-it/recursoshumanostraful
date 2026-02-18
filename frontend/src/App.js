@@ -5,7 +5,6 @@ import LicenciaData from './LicenciaData'; // New component for "Licencia"
 import Formulario81DData from './Formulario81DData'; // New component for "Formulario 81_inciso_D"
 import Formulario81FData from './Formulario81FData'; // New component for "Formulario 81_inciso_F"
 import MainMenu from './MainMenu';   // The new menu component
-import SentEmails from './SentEmails'; // Import new component
 
 function App() {
   const [selectedModule, setSelectedModule] = useState(null);
@@ -28,8 +27,6 @@ function App() {
         return <Formulario81DData onBackToMenu={handleBackToMenu} />; // Render Formulario81DData
       case 'Formulario 81_inciso_F':
         return <Formulario81FData onBackToMenu={handleBackToMenu} />; // Render Formulario81FData
-      case 'Control de Envíos':
-        return <SentEmails onBackToMenu={handleBackToMenu} />;
       default:
         return <MainMenu onSelectModule={handleSelectModule} />;
     }

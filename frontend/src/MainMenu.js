@@ -7,7 +7,10 @@ function MainMenu({ onSelectModule }) {
     'Licencia',
     'Formulario 81_inciso_D',
     'Formulario 81_inciso_F',
-    'Control de Envíos'
+    'Certificado Medico',
+    'Licencia',
+    'Formulario 81_inciso_D',
+    'Formulario 81_inciso_F'
   ];
 
   return (
