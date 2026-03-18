@@ -16,9 +16,11 @@ function DataCard({ row, headers }) {
   const nameHeader = headers.find(h => ['nombre', 'name'].includes(h.toLowerCase()));
   const surnameHeader = headers.find(h => ['apellido', 'surname', 'legajo'].includes(h.toLowerCase()));
   const emailHeader = headers.find(h => ['email'].includes(h.toLowerCase())); // Encontrar el encabezado del email
+  const certificadoAdjuntoHeader = headers.find(h => h.toLowerCase() === 'certificado_adjunto');
+  const certificadoAdjuntoUrl = certificadoAdjuntoHeader ? row[certificadoAdjuntoHeader] : null;
 
   const hiddenItems = headers.filter(header =>
-    header !== nameHeader && header !== surnameHeader && header !== 'pdf_drive_id' && header !== emailHeader
+    header !== nameHeader && header !== surnameHeader && header !== 'pdf_drive_id' && header !== emailHeader && header !== certificadoAdjuntoHeader
   );
 
   const pdfDriveId = row['pdf_drive_id'];
@@ -98,6 +100,21 @@ function DataCard({ row, headers }) {
                   Ver PDF
                 </a>
               </span>
+            </div>
+          )}
+
+          {/* Mostrar imagen del certificado adjunto si existe */}
+          {certificadoAdjuntoUrl && (
+            <div className="card-item hidden-item certificado-image-item">
+              <span className="card-label">Certificado Adjunto:</span>
+              <div className="certificado-image-container">
+                <img 
+                  src={certificadoAdjuntoUrl} 
+                  alt="Certificado adjunto" 
+                  className="certificado-image"
+                  onClick={() => window.open(certificadoAdjuntoUrl, '_blank')}
+                />
+              </div>
             </div>
           )}
 
