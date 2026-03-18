@@ -20,6 +20,28 @@ drive_service = None
 app = FastAPI()
 
 
+def find_pdf_drive_id(pdf_name_from_sheet: str | None, pdf_name_to_id_map: dict) -> str | None:
+    """Busca el ID de Drive para un PDF dado su nombre, con coincidencia flexible."""
+    if not pdf_name_from_sheet:
+        return None
+    
+    lookup_name_with_ext = f"{pdf_name_from_sheet}.pdf".lower()
+    lookup_name_as_is = f"{pdf_name_from_sheet}".lower()
+    
+    # Búsqueda exacta
+    if lookup_name_with_ext in pdf_name_to_id_map:
+        return pdf_name_to_id_map[lookup_name_with_ext]
+    if lookup_name_as_is in pdf_name_to_id_map:
+        return pdf_name_to_id_map[lookup_name_as_is]
+    
+    # Búsqueda parcial: el nombre de la hoja está contenido en el nombre del archivo
+    for filename, file_id in pdf_name_to_id_map.items():
+        if lookup_name_as_is in filename:
+            return file_id
+    
+    return None
+
+
 
 
 
@@ -230,17 +252,8 @@ async def get_sheet_data(request: Request):
             # Obtener el nombre del PDF de la columna 'id'
             pdf_name_from_sheet = row_values[id_column_index] if id_column_index < len(row_values) else None
             
-            pdf_drive_id = None
-            if pdf_name_from_sheet:
-                # Buscar en el mapa el nombre del archivo (con extensión .pdf y en minúsculas)
-                # El nombre en la hoja puede o no tener la extensión, así que probamos ambas.
-                lookup_name_with_ext = f"{pdf_name_from_sheet}.pdf".lower()
-                lookup_name_as_is = f"{pdf_name_from_sheet}".lower()
-
-                if lookup_name_with_ext in pdf_name_to_id_map:
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_with_ext]
-                elif lookup_name_as_is in pdf_name_to_id_map: # Fallback si el nombre ya incluye .pdf
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_as_is]
+            # Usar la función auxiliar para buscar el PDF
+            pdf_drive_id = find_pdf_drive_id(pdf_name_from_sheet, pdf_name_to_id_map)
             
             row_dict['pdf_drive_id'] = pdf_drive_id
             row_dict['sheet_row_number'] = sheet_row_number # Add this line
@@ -315,17 +328,8 @@ async def get_licencia_sheet_data(request: Request):
             # Obtener el nombre del PDF de la columna 'id'
             pdf_name_from_sheet = row_values[id_column_index] if id_column_index < len(row_values) else None
             
-            pdf_drive_id = None
-            if pdf_name_from_sheet:
-                # Buscar en el mapa el nombre del archivo (con extensión .pdf y en minúsculas)
-                # El nombre en la hoja puede o no tener la extensión, así que probamos ambas.
-                lookup_name_with_ext = f"{pdf_name_from_sheet}.pdf".lower()
-                lookup_name_as_is = f"{pdf_name_from_sheet}".lower()
-
-                if lookup_name_with_ext in pdf_name_to_id_map:
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_with_ext]
-                elif lookup_name_as_is in pdf_name_to_id_map: # Fallback si el nombre ya incluye .pdf
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_as_is]
+            # Usar la función auxiliar para buscar el PDF
+            pdf_drive_id = find_pdf_drive_id(pdf_name_from_sheet, pdf_name_to_id_map)
             
             row_dict['pdf_drive_id'] = pdf_drive_id
             row_dict['sheet_row_number'] = sheet_row_number # Add this line
@@ -400,17 +404,8 @@ async def get_formulario_81_d_sheet_data(request: Request):
             # Obtener el nombre del PDF de la columna 'id'
             pdf_name_from_sheet = row_values[id_column_index] if id_column_index < len(row_values) else None
             
-            pdf_drive_id = None
-            if pdf_name_from_sheet:
-                # Buscar en el mapa el nombre del archivo (con extensión .pdf y en minúsculas)
-                # El nombre en la hoja puede o no tener la extensión, así que probamos ambas.
-                lookup_name_with_ext = f"{pdf_name_from_sheet}.pdf".lower()
-                lookup_name_as_is = f"{pdf_name_from_sheet}".lower()
-
-                if lookup_name_with_ext in pdf_name_to_id_map:
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_with_ext]
-                elif lookup_name_as_is in pdf_name_to_id_map: # Fallback si el nombre ya incluye .pdf
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_as_is]
+            # Usar la función auxiliar para buscar el PDF
+            pdf_drive_id = find_pdf_drive_id(pdf_name_from_sheet, pdf_name_to_id_map)
             
             row_dict['pdf_drive_id'] = pdf_drive_id
             row_dict['sheet_row_number'] = sheet_row_number # Add this line
@@ -485,17 +480,8 @@ async def get_formulario_81_f_sheet_data(request: Request):
             # Obtener el nombre del PDF de la columna 'id'
             pdf_name_from_sheet = row_values[id_column_index] if id_column_index < len(row_values) else None
             
-            pdf_drive_id = None
-            if pdf_name_from_sheet:
-                # Buscar en el mapa el nombre del archivo (con extensión .pdf y en minúsculas)
-                # El nombre en la hoja puede o no tener la extensión, así que probamos ambas.
-                lookup_name_with_ext = f"{pdf_name_from_sheet}.pdf".lower()
-                lookup_name_as_is = f"{pdf_name_from_sheet}".lower()
-
-                if lookup_name_with_ext in pdf_name_to_id_map:
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_with_ext]
-                elif lookup_name_as_is in pdf_name_to_id_map: # Fallback si el nombre ya incluye .pdf
-                    pdf_drive_id = pdf_name_to_id_map[lookup_name_as_is]
+            # Usar la función auxiliar para buscar el PDF
+            pdf_drive_id = find_pdf_drive_id(pdf_name_from_sheet, pdf_name_to_id_map)
             
             row_dict['pdf_drive_id'] = pdf_drive_id
             row_dict['sheet_row_number'] = sheet_row_number # Add this line

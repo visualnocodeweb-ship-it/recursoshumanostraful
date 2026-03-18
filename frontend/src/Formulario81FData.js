@@ -221,8 +221,8 @@ function Formulario81FData({ onBackToMenu }) { // Accept onBackToMenu prop
 
       <div className="sheet-data-container">
         {currentRecords.length > 0 ? (
-          currentRecords.map((row, rowIndex) => (
-            <Formulario81FDataCard key={rowIndex} row={row} headers={data.headers} />
+          currentRecords.map((row) => (
+            <Formulario81FDataCard key={row['sheet_row_number'] || JSON.stringify(row)} row={row} headers={data.headers} />
           ))
         ) : (
           <p className="no-data-message">No se encontraron registros de Formulario 81 Inciso F.</p>

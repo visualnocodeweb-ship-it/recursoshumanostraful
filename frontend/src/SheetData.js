@@ -216,8 +216,8 @@ function SheetData({ onBackToMenu }) { // Accept onBackToMenu prop
 
       <div className="sheet-data-container">
         {currentRecords.length > 0 ? (
-          currentRecords.map((row, rowIndex) => (
-            <DataCard key={rowIndex} row={row} headers={data.headers} />
+          currentRecords.map((row) => (
+            <DataCard key={row['sheet_row_number'] || JSON.stringify(row)} row={row} headers={data.headers} />
           ))
         ) : (
           <p className="no-data-message">No se encontraron registros.</p>
